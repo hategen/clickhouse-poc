@@ -1,0 +1,1 @@
+clickhouse-client --host 'server' --user 'default' --password 'dupadupa'

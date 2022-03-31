@@ -165,7 +165,11 @@
 
     <!-- Default database. -->
     <default_database>default</default_database>
-
+    <send_crash_reports>
+    <!-- Changing <enabled> to true allows sending crash reports to -->
+    <!-- the ClickHouse core developers team via Sentry https://sentry.io -->
+        <enabled>true</enabled>
+    </send_crash_reports>
     <!-- Server time zone could be set here.
 
          Time zone is used when converting between String and DateTime types,

@@ -1,6 +1,0 @@
-clickhouse-client --password="dupadupa" --query="TRUNCATE TABLE default.statOpt"
-for FILENAME in /data/statOpt/*.parquet; do
-      cat $FILENAME \
-          | clickhouse-client --password="dupadupa" \
-              --query="INSERT INTO statOpt FORMAT Parquet"
-  done

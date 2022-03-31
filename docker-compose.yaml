@@ -15,8 +15,8 @@ services:
     volumes:
       - ./config.xml:/etc/clickhouse-server/config.xml
       - ./users.xml:/etc/clickhouse-server/users.xml
-      - ./ontime.tar:/data/ontime.tar
-      - ./statOpt:/data/statOpt
+      - ./dataImport:/data/dataImport
+      - ch_data:/var/lib/clickhouse/
 
   client:
     image: clickhouse/clickhouse-client:latest
@@ -37,3 +37,4 @@ networks:
 
 volumes:
   portainer_data:
+  ch_data:

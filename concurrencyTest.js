@@ -152,7 +152,7 @@ const teamIds = [
     6800
 ];
 
-const getQueryString = (teamId, startDate,endDate)=>{
+const getQueryString = (teamId, startDate, endDate) => {
     return `
         SELECT
           toDate(creationDateUnix) AS "__timestamp",
@@ -166,22 +166,23 @@ const getQueryString = (teamId, startDate,endDate)=>{
         ORDER BY 1 desc
         `
 }
-const makeQuery =  () => {
+const makeQuery = () => {
 
     const teamId = sample(teamIds);
 
-    const startDate = Date.UTC(random(2019,2022), random(0,11), random(0,28));
+    const startDate = Date.UTC(random(2019, 2022), random(0, 11), random(0, 28));
     const endDate = startDate + 31536000000;
 
 
-    const startDateStr = (new Date(startDate).toISOString()).slice(0,10);
-    const endDateStr = (new Date(endDate).toISOString()).slice(0,10);
+    const startDateStr = (new Date(startDate).toISOString()).slice(0, 10);
+    const endDateStr = (new Date(endDate).toISOString()).slice(0, 10);
     const qs = getQueryString(teamId, startDateStr, endDateStr);
-    console.log(startDateStr, endDateStr);
+    // console.log(startDateStr, endDateStr);
 
     const start = Date.now();
-    const promise =  clickhouse.query(qs).toPromise().then(data=>{
-        console.log(Date.now() - start, data.length);
+    const promise = clickhouse.query(qs).toPromise().then(data => {
+        console.log(teamId, `${startDateStr}-${endDateStr}`, Date.now() - start, data.length);
+        return data
     });
 
 
@@ -190,15 +191,34 @@ const makeQuery =  () => {
 
 
 const startG = Date.now();
+
 Promise.all([
     makeQuery(),
     makeQuery(),
     makeQuery(),
     makeQuery(),
-    makeQuery()
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+    makeQuery(),
+
 ]).then(d => {
     console.log('Global time')
     console.log(Date.now() - startG);
 })
+
+
 
 

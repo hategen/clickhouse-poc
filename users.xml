@@ -10,6 +10,9 @@
             <!-- Use cache of uncompressed blocks of data. Meaningful only for processing many of very short queries. -->
             <use_uncompressed_cache>0</use_uncompressed_cache>
             <allow_experimental_object_type>1</allow_experimental_object_type>
+            <describe_include_subcolumns>1</describe_include_subcolumns>
+            <describe_extend_object_types>1</describe_extend_object_types>
+
 
             <!-- How to choose between replicas during distributed query processing.
                  random - choose random replica from set of replicas with minimum number of errors

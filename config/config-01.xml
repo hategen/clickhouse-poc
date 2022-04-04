@@ -2,7 +2,7 @@
 <!--
   NOTE: User and query level settings are set up in "users.xml" file.
 -->
-<stonly>
+<yandex>
     <logger>
         <!-- Possible levels: https://github.com/pocoproject/poco/blob/poco-1.9.4-release/Foundation/include/Poco/Logger.h#L105 -->
         <level>trace</level>
@@ -164,36 +164,46 @@
                 <replica>
                     <host>clickhouse01</host>
                     <port>9000</port>
+                    <password>dupadupa</password>
+                    <user>default</user>
                 </replica>
                 <replica>
                     <host>clickhouse02</host>
                     <port>9000</port>
+                    <password>dupadupa</password>
+                    <user>default</user>
                 </replica>
+                <internal_replication>true</internal_replication>
             </shard>
             <shard>
                 <replica>
                     <host>clickhouse03</host>
                     <port>9000</port>
+                    <password>dupadupa</password>
+                    <user>default</user>
                 </replica>
                 <replica>
                     <host>clickhouse04</host>
                     <port>9000</port>
+                    <password>dupadupa</password>
+                    <user>default</user>
                 </replica>
+                <internal_replication>true</internal_replication>
             </shard>
         </stonly_cluster>
     </remote_servers>
 
     <zookeeper>
         <node index="1">
-            <host>zookeeper</host>
+            <host>ch-zookeeper</host>
             <port>2181</port>
         </node>
     </zookeeper>
 
     <macros>
-        <cluster>company_cluster</cluster>
-        <shard>${SHARD}</shard>
-        <replica>clickhouse${REPLICA}</replica>
+        <cluster>stonly_cluster</cluster>
+        <shard>01</shard>
+        <replica>clickhouse01</replica>
     </macros>
 
     <!-- Reloading interval for embedded dictionaries, in seconds. Default: 3600. -->
@@ -240,7 +250,7 @@
     </compression>
 
     <distributed_ddl>
-        <path>/clickhouse/task_queue/ddl</path>
+        <path>/clickhouse/stonly_cluster/task_queue/ddl</path>
     </distributed_ddl>
 
     <graphite_rollup_example>
@@ -275,4 +285,4 @@
 
     <format_schema_path>/var/lib/clickhouse/format_schemas/</format_schema_path>
 
-</stonly>
+</yandex>

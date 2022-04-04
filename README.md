@@ -6,11 +6,11 @@ Conect to  CH using client
 Basic script for loading  data  from Parquet 
 Table structure must be created in advance
 ``` 
-clickhouse-client --password="dupadupa" --query="TRUNCATE TABLE default.statOptJSONstr"
+clickhouse-client --password="dupadupa" --query="TRUNCATE TABLE default.statOpt"
 for FILENAME in /data/dataImport/statOptJSONstr/*.parquet; do
 cat $FILENAME \
 | clickhouse-client --password="dupadupa" \
---query="INSERT INTO statOptJSONstr FORMAT Parquet"
+--query="INSERT INTO statOpt FORMAT Parquet"
 done
 ```
 
@@ -351,4 +351,169 @@ from
 	statOpt so
 where 
 	so.stepId > 1
+````
+
+
+
+Loading data  into  distributed  table 
+
+````
+
+CREATE TABLE default.statOptSrcLocal
+(
+    `statId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `binDeviceId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `binUserId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `binSessionId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `initial` UInt8 DEFAULT toUInt8(0),
+    `containerId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `stepId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `creationDate` UInt64 CODEC(DoubleDelta, ZSTD(1)),
+    `creationDateUnix` UInt64 CODEC(DoubleDelta, ZSTD(1)),
+    `logged` UInt8 DEFAULT toUInt8(0),
+    `deviceType` Enum8('console' = 1,'embedded' = 2,'desktop' =3,'mobile' =4,'smarttv' =5,'tablet' =6,' wearable' =7) DEFAULT 'desktop',
+    `screenResolutionId` Nullable(UInt32)  DEFAULT toUInt32(0),
+    `deviceMakeId` Nullable(UInt32)  DEFAULT toUInt32(0),
+    `platformId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `browserId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `actionType` Enum8('pageView' =1,'login' =2,'choice' =3 ,'goToNewRequest' =4,'SessionInfoRequest' =5,'openIntercom' =6,'openZendeskChat' =7,'openFrontChat' =8,'kbView' =9,'openFreshChat' =10,'openHelpshift' =11,'openLiveChat'=12,'openCrispChat'=13,'openHubspotChat'=14,'openGorgiasChat'=15,'specialStepAction'=16,'checklistItemCompleted'=17,'checklistCompleted'=18,'checklistSkipped'=19),
+    `languageId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `statsUriId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `referrerDomainId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `referrerPathId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `statsDisplayType` Enum8('direct'=1,'embed'=2,'widget'=3),
+    `folderId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `groupId` Nullable(String),
+    `countryId` Nullable(UInt16) DEFAULT toUInt16(0),
+    `timeSpent` Nullable(Float64) DEFAULT toFloat64(0),
+    `guideLanguageId` Nullable(UInt16) DEFAULT toUInt16(0),
+    `knowledgeBaseId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `browserType` Enum8('Chrome' =1,'Safari' =2,'Firefox' =3,'Edge' =4,'IE' =5,'Opera' =6 ,'Other' =7),
+    `platformType` Enum8('Windows' =1,'Mac OS' =2,'iOS' =3,'Android' =4,'Linux' =5,'Chromium OS' =6,'Other' =7),
+    `isBillableGuideView` UInt8  DEFAULT toUInt8(0),
+    `actionDetailStr` Nullable(String),
+    `teamId` Nullable(UInt32)  DEFAULT toUInt8(0)
+)
+ENGINE = MergeTree
+ORDER BY (creationDateUnix)
+SETTINGS index_granularity = 8192;
+
+CREATE TABLE default.statOpt_local on cluster '{cluster}'
+(
+    `statId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `binDeviceId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `binUserId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `binSessionId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `initial` UInt8 DEFAULT toUInt8(0),
+    `containerId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `stepId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `creationDate` UInt64 CODEC(DoubleDelta, ZSTD(1)),
+    `creationDateUnix` UInt64 CODEC(DoubleDelta, ZSTD(1)),
+    `logged` UInt8 DEFAULT toUInt8(0),
+    `deviceType` Enum8('console' = 1,'embedded' = 2,'desktop' =3,'mobile' =4,'smarttv' =5,'tablet' =6,' wearable' =7) DEFAULT 'desktop',
+    `screenResolutionId` Nullable(UInt32)  DEFAULT toUInt32(0),
+    `deviceMakeId` Nullable(UInt32)  DEFAULT toUInt32(0),
+    `platformId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `browserId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `actionType` Enum8('pageView' =1,'login' =2,'choice' =3 ,'goToNewRequest' =4,'SessionInfoRequest' =5,'openIntercom' =6,'openZendeskChat' =7,'openFrontChat' =8,'kbView' =9,'openFreshChat' =10,'openHelpshift' =11,'openLiveChat'=12,'openCrispChat'=13,'openHubspotChat'=14,'openGorgiasChat'=15,'specialStepAction'=16,'checklistItemCompleted'=17,'checklistCompleted'=18,'checklistSkipped'=19),
+    `languageId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `statsUriId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `referrerDomainId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `referrerPathId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `statsDisplayType` Enum8('direct'=1,'embed'=2,'widget'=3),
+    `folderId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `groupId` Nullable(String),
+    `countryId` Nullable(UInt16) DEFAULT toUInt16(0),
+    `timeSpent` Nullable(Float64) DEFAULT toFloat64(0),
+    `guideLanguageId` Nullable(UInt16) DEFAULT toUInt16(0),
+    `knowledgeBaseId` Nullable(UInt32) DEFAULT toUInt32(0),
+    `browserType` Enum8('Chrome' =1,'Safari' =2,'Firefox' =3,'Edge' =4,'IE' =5,'Opera' =6 ,'Other' =7),
+    `platformType` Enum8('Windows' =1,'Mac OS' =2,'iOS' =3,'Android' =4,'Linux' =5,'Chromium OS' =6,'Other' =7),
+    `isBillableGuideView` UInt8  DEFAULT toUInt8(0),
+    `actionDetailStr` Nullable(String),
+    `teamId` UInt32  DEFAULT toUInt8(0)
+)
+ENGINE = ReplicatedMergeTree('/clickhouse/{cluster}/tables/statOpt/{shard}','{replica}')
+ORDER BY (teamId, creationDateUnix)
+SETTINGS index_granularity = 8192;
+
+
+CREATE TABLE default.statOpt on cluster '{cluster}' 
+as default.statOpt_local
+ENGINE  = Distributed('{cluster}', 'default', 'statOpt_local', teamId )
+
+
+
+
+ 
+
+INSERT INTO
+	statOpt (
+	statId, 
+	binDeviceId,
+	binUserId,
+	binSessionId,
+	initial,
+	containerId,
+	stepId,
+	creationDate,
+	creationDateUnix,
+	logged,
+	deviceType,
+	screenResolutionId,
+	deviceMakeId,
+	platformId,
+	browserId,
+	actionType,
+	languageId,
+	statsUriId,
+	referrerDomainId,
+	referrerPathId,
+	statsDisplayType,
+	folderId,
+	groupId,
+	countryId,
+	timeSpent,
+	guideLanguageId,
+	knowledgeBaseId,
+	browserType,
+	platformType,
+	isBillableGuideView,
+	teamId)
+select 
+	statId, 
+	COALESCE(binDeviceId, toUInt32(0) ),
+	COALESCE(binUserId, toUInt32(0) ),
+	COALESCE(binSessionId, toUInt32(0) ),
+	initial,
+	COALESCE(containerId, toUInt32(0) ),
+	COALESCE(stepId, toUInt32(0) ),
+	creationDate,
+	creationDateUnix,
+	logged,
+	deviceType,
+	screenResolutionId,
+	deviceMakeId,
+	platformId,
+	browserId,
+	actionType,
+	languageId,
+	statsUriId,
+	referrerDomainId,
+	referrerPathId,
+	statsDisplayType,
+	COALESCE(folderId, toUInt32(0)),
+	arrayFilter( x -> x!= 0, arrayMap(x ->  toUInt32OrZero(x) , splitByChar(',', COALESCE (groupId,'')) )) groupId,
+	COALESCE(countryId, toUInt32(0) ),
+	COALESCE(timeSpent, toUInt32(0) ),
+	COALESCE(guideLanguageId, toUInt32(0) ),
+	COALESCE(knowledgeBaseId, toUInt32(0) ),
+	COALESCE(browserType, toUInt32(0) ),
+	COALESCE(platformType, toUInt32(0) ),
+	isBillableGuideView,
+	COALESCE(teamId, toUInt32(0))
+from 
+	statOptSrcLocal 
+
+
 ````

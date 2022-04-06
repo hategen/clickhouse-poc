@@ -517,3 +517,39 @@ from
 
 
 ````
+
+MV 
+
+````
+CREATE MATERIALIZED VIEW IF NOT EXISTS default.statSteps_local  on CLUSTER '{cluster}' 
+ENGINE = AggregatingMergeTree
+ORDER BY (teamId, creationDate, containerId, stepId)
+SETTINGS index_granularity = 8192
+POPULATE  AS SELECT
+	  toDate(creationDateUnix) creationDate,
+	  countState() viewCount,
+	  containerId,
+	  stepId,
+	  teamId
+FROM statOpt2_local sol 
+WHERE 
+    actionType  = 'pageView'
+	AND containerId IS NOT NULL
+	AND stepId IS NOT NULL
+	AND timeSpent IS NOT NULL
+GROUP BY
+      creationDate,
+      containerId,
+      stepId,
+      teamId
+      
+      
+CREATE TABLE default.statSteps on cluster '{cluster}' 
+as default.statSteps_local
+ENGINE = Distributed('{cluster}', 'default', 'statSteps_local', teamId )      
+
+select 
+	countMerge(viewCount)
+from  
+	statSteps 
+````
